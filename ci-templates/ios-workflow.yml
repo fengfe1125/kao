@@ -1,16 +1,144 @@
 name: Build kao iOS
+
 on:
   workflow_dispatch:
+    inputs:
+      upload_testflight:
+        description: '构建后上传到 TestFlight'
+        required: false
+        default: 'false'
   push:
     tags: ['v*']
+
 jobs:
   build:
     runs-on: macos-14
+    timeout-minutes: 40
+
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare web assets
-        run: mkdir -p ios/KaoApp/web && cp -R web/* ios/KaoApp/web/
-      - name: Create Xcode project note
-        run: echo 'Add ios/KaoApp as Swift files in an Xcode project with web folder as resources.'
-      - name: Archive placeholder
-        run: echo 'Configure signing and archive in the next step.'
+
+      - name: 准备网页资源
+        run: |
+          mkdir -p ios/KaoApp/web
+          cp -R web/* ios/KaoApp/web/
+          echo "网页文件数：$(find ios/KaoApp/web -type f | wc -l)"
+
+      - name: 安装 XcodeGen
+        run: brew install xcodegen
+
+      - name: 生成 project.yml
+        run: |
+          cat > ios/project.yml <<'YML'
+          name: Kao
+          options:
+            bundleIdPrefix: ${{ secrets.BUNDLE_ID_PREFIX }}
+            deploymentTarget:
+              iOS: "15.0"
+          targets:
+            Kao:
+              type: application
+              platform: iOS
+              sources:
+                - path: KaoApp
+                  excludes: ["web"]
+                - path: KaoApp/web
+                  type: folder
+              info:
+                path: KaoApp/Info.plist
+              settings:
+                base:
+                  PRODUCT_BUNDLE_IDENTIFIER: ${{ secrets.BUNDLE_ID }}
+                  PRODUCT_NAME: Kao
+                  MARKETING_VERSION: "1.0"
+                  CURRENT_PROJECT_VERSION: "${{ github.run_number }}"
+                  DEVELOPMENT_TEAM: ${{ secrets.APPLE_TEAM_ID }}
+                  CODE_SIGN_STYLE: Automatic
+                  TARGETED_DEVICE_FAMILY: "1,2"
+                  SWIFT_VERSION: "5.0"
+          YML
+          cd ios && xcodegen generate
+
+      - name: 编译（不签名，验证代码可构建）
+        run: |
+          cd ios
+          xcodebuild build \
+            -project Kao.xcodeproj \
+            -scheme Kao \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            | tail -30
+
+      - name: 导入签名证书
+        if: github.event.inputs.upload_testflight == 'true'
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          PRIVATE_KEY: ${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/private_keys
+          echo "$PRIVATE_KEY" > ~/private_keys/AuthKey_${KEY_ID}.p8
+          echo "已写入 API 密钥"
+
+      - name: Archive 并导出 IPA
+        if: github.event.inputs.upload_testflight == 'true'
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          cd ios
+          xcodebuild archive \
+            -project Kao.xcodeproj \
+            -scheme Kao \
+            -configuration Release \
+            -archivePath build/Kao.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID $KEY_ID \
+            -authenticationKeyIssuerID $ISSUER_ID
+
+          cat > build/ExportOptions.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store</string>
+            <key>teamID</key><string>${{ secrets.APPLE_TEAM_ID }}</string>
+            <key>uploadSymbols</key><true/>
+            <key>signingStyle</key><string>automatic</string>
+          </dict>
+          </plist>
+          PLIST
+
+          xcodebuild -exportArchive \
+            -archivePath build/Kao.xcarchive \
+            -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/ipa \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/private_keys/AuthKey_${KEY_ID}.p8 \
+            -authenticationKeyID $KEY_ID \
+            -authenticationKeyIssuerID $ISSUER_ID
+
+      - name: 上传 TestFlight
+        if: github.event.inputs.upload_testflight == 'true'
+        env:
+          KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          xcrun altool --upload-app \
+            -f ios/build/ipa/Kao.ipa \
+            -t ios \
+            --apiKey $KEY_ID \
+            --apiIssuer $ISSUER_ID
+
+      - name: 保存构建产物
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: kao-build
+          path: |
+            ios/build/ipa/*.ipa
+            ios/Kao.xcodeproj
+          if-no-files-found: warn
