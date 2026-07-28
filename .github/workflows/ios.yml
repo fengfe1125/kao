@@ -1,0 +1,16 @@
+name: Build kao iOS
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare web assets
+        run: mkdir -p ios/KaoApp/web && cp -R web/* ios/KaoApp/web/
+      - name: Create Xcode project note
+        run: echo 'Add ios/KaoApp as Swift files in an Xcode project with web folder as resources.'
+      - name: Archive placeholder
+        run: echo 'Configure signing and archive in the next step.'
