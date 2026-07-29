@@ -701,3 +701,24 @@ body.deep-lock{overflow:hidden}
   font-size:11px;color:var(--ink3)}
 .wp-none{margin-top:6px;font-size:12.5px;color:var(--ink3)}
 .wp-dim{color:var(--ink3);font-size:10.5px;line-height:1.5}
+
+/* ============================================================
+   新词学习卡 v2
+   ============================================================ */
+.sv-card{padding:0;overflow:hidden}
+.sv-card .stag{margin:14px 16px 0}
+.sv-head{padding:12px 16px 16px;text-align:center;
+  border-bottom:1px solid var(--line)}
+.sv-w{font-size:32px;font-weight:700;color:var(--ink);
+  letter-spacing:.3px;word-break:break-word;line-height:1.25}
+.sv-ph{font-size:13px;color:var(--ink3);margin-top:5px;
+  font-family:'SF Mono',Menlo,monospace}
+.sv-spk{display:flex;gap:8px;justify-content:center;margin-top:10px}
+.sv-def{margin-top:13px}
+.sv-def .dp-line{justify-content:center}
+.sv-def .dp-def{font-size:15.5px;color:var(--ink)}
+.sv-tags{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:11px}
+.sv-body{padding:15px 16px 4px}
+.sv-body .deep-sec{margin-bottom:15px}
+.sv-foot{padding:4px 16px 16px}
+.sv-hint{text-align:center;font-size:12px;color:var(--ink3);margin-bottom:11px}

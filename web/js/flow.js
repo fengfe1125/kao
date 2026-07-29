@@ -8,8 +8,9 @@
 function buildSessQueue(fresh, review){
   const q=[];
   fresh.forEach(w=>{
-    q.push({study:true, word:w[0], wordArr:w, isNew:true, rep:0,
-            speakText:w[0], _pair:true});
+    q.push({study:true, word:w[0], wordArr:w,
+            ph:w[1], mean:w[2], lv:w[3],
+            isNew:true, rep:0, speakText:w[0], _pair:true});
     q.push({__pending:true, wordArr:w, isNew:true, rep:1, afterStudy:true});
   });
   review.forEach(w=>{
@@ -123,6 +124,9 @@ function sessGrade(q){
         btnText: sess.correct?(isLast?'下一个词':'继续'):'我记住了',
         onClose: ()=>{ sessNext(); }});
     }, sess.correct?260:420);
+  } else {
+    // 没有词条数据时直接进入下一题，避免卡住
+    setTimeout(()=>{ sessNext(); }, 400);
   }
   if(!sess.correct) speak(q.speakText);
 }
@@ -291,4 +295,54 @@ function useView(q){
       <button class="btn full" style="margin-top:11px" onclick="sessNext()">
         ${sess.i>=sess.queue.length-1?'完成学习':'下一个 ›'}</button>`:''}
   </div>`;
+}
+
+
+/* ============================================================
+   新词学习卡 v2 —— 第一屏就给全信息
+   词性 / 释义 / 拆解 / 例句 / 同义替换，全部直接展示
+   ============================================================ */
+function studyView(it){
+  const w = it.wordArr || findWordArr(it.word);
+  const d = w ? deepCard(w) : null;
+  const mark = d && d.lv===1 ? '▲' : d && d.lv===2 ? '◆' : '';
+  const tierName = (d && typeof TIER_INFO!=='undefined' && TIER_INFO[d.tier])
+    ? TIER_INFO[d.tier].name : '';
+
+  return `
+  ${sessBar()}
+  <div class="card sv-card">
+    <div class="stag">🆕 新词学习</div>
+
+    <div class="sv-head">
+      <div class="sv-w">${esc(it.word)}</div>
+      ${it.ph?`<div class="sv-ph">${esc(it.ph)}</div>`:''}
+      <div class="sv-spk">
+        <button class="spk" onclick="speak('${esc2(it.speakText||it.word)}')">🔊 朗读</button>
+        <button class="spk" onclick="speakSlow('${esc2(it.speakText||it.word)}')">🐢 慢速</button>
+      </div>
+      <div class="sv-def">${defByPos(it.mean||'')}</div>
+      ${(mark||tierName)?`<div class="sv-tags">
+        ${mark?`<span class="dt ${d.lv===1?'up':'dia'}">${mark} ${d.lv===1?'基础模块新增':'拓展模块新增'}</span>`:''}
+        ${tierName?`<span class="dt">${tierName}</span>`:''}
+      </div>`:''}
+    </div>
+
+    ${d?`<div class="sv-body">
+      ${deepMorph(d)}
+      ${deepSent(d)}
+      ${deepSyn(d)}
+      ${deepAdvice(d)}
+    </div>`:''}
+
+    <div class="sv-foot">
+      <div class="sv-hint">看懂之后点下面，马上会考你这个词</div>
+      <button class="btn full" onclick="studyNext()">记住了，开始测试 ›</button>
+    </div>
+  </div>`;
+}
+
+/* 学习卡点「记住了」后直接进测试，不再重复弹深度卡 */
+function studyNext(){
+  sessNext();
 }
