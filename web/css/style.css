@@ -371,3 +371,124 @@ main{padding:14px 16px;max-width:760px;margin:0 auto}
 .lesson-goal{background:var(--brand-l);border-radius:11px;padding:13px;margin:10px 0;font-size:13px;color:var(--ink2);line-height:1.7}.lesson-goal b{color:var(--brand)}
 .lesson-step{display:flex;gap:10px;border-bottom:1px solid var(--line2);padding:12px 2px;font-size:13px;color:var(--ink2);line-height:1.75}.step-no{width:24px;height:24px;border-radius:50%;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}.lesson-step b{color:var(--ink);font-size:13.5px}.lesson-step p{margin-top:3px}
 .lesson-example{background:var(--warm-l);border-radius:11px;padding:13px;margin:11px 0;font-size:13px;color:#765516;line-height:1.75}.lesson-example b{color:#9a711e}.lesson-example p{margin-top:4px}.lesson-check{background:var(--ok-l);border-radius:11px;padding:13px;margin:11px 0;font-size:13px;color:var(--ink2);line-height:1.7}.lesson-check b{color:var(--ok)}.lesson-check p{margin:4px 0 8px}.lesson-next{display:flex;justify-content:space-between;align-items:center;padding:12px 2px;margin-bottom:10px;font-size:12px;color:var(--ink3)}.lesson-next b{color:var(--brand);font-size:13px}
+
+/* ============================================================
+   构词法模块样式
+   注意：禁用 animation 与 backdrop-filter（iSH WebView 兼容）
+   ============================================================ */
+
+/* 顶部标签导航 */
+.wb-nav{display:flex;gap:6px;overflow-x:auto;padding:2px 0 10px;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.wb-nav::-webkit-scrollbar{display:none}
+.wb-nav button{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
+  gap:3px;padding:8px 13px;border:1px solid var(--line);border-radius:11px;
+  background:var(--card);color:var(--ink2);font-size:12px;cursor:pointer;
+  transition:none;min-width:60px}
+.wb-nav button i{font-style:normal;font-size:15px;line-height:1}
+.wb-nav button span{white-space:nowrap;font-size:11.5px}
+.wb-nav button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* 引导说明块 */
+.wb-intro{background:var(--card);border-radius:var(--r);padding:14px 15px;
+  margin-bottom:12px;border-left:3px solid var(--brand);box-shadow:var(--sh)}
+.wb-intro b{display:block;font-size:14px;margin-bottom:5px;color:var(--ink)}
+.wb-intro p{font-size:12.5px;color:var(--ink2);line-height:1.65;margin:0}
+
+/* 折叠卡片 */
+.wb-card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);
+  margin-bottom:9px;overflow:hidden}
+.wb-head{display:flex;align-items:center;gap:11px;padding:13px 14px;cursor:pointer}
+.wb-key{flex:0 0 auto;min-width:62px;text-align:center;padding:6px 9px;
+  background:var(--brand);color:#fff;border-radius:8px;
+  font-size:13.5px;font-weight:600;letter-spacing:.3px}
+.wb-key.suf{background:var(--ink2)}
+.syn-core{flex:0 0 auto;min-width:70px;text-align:center;padding:6px 9px;
+  background:var(--bg);color:var(--brand);border:1px solid var(--brand);
+  border-radius:8px;font-size:13px;font-weight:600}
+.wb-mean{flex:1;min-width:0}
+.wb-mean b{display:block;font-size:13.5px;color:var(--ink);font-weight:600}
+.wb-mean span{font-size:11.5px;color:var(--ink3)}
+.wb-pos{display:inline-block;margin-left:6px;padding:1px 6px;background:var(--bg);
+  border-radius:5px;font-size:10.5px;color:var(--ink2)}
+.wb-arrow{flex:0 0 auto;color:var(--ink3);font-size:13px;padding:0 2px}
+.wb-arrow.up{transform:rotate(180deg)}
+
+/* 展开内容 */
+.wb-body{padding:0 14px 14px;border-top:1px solid var(--line)}
+.wb-from{font-size:11.5px;color:var(--ink3);padding:9px 0 7px}
+.wb-word{background:var(--bg);border-radius:9px;padding:10px 12px;margin-bottom:7px}
+.ww-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ww-top b{font-size:14.5px;color:var(--ink);font-weight:600}
+.ww-spk{background:none;border:none;font-size:14px;cursor:pointer;
+  padding:2px 4px;opacity:.65;line-height:1}
+.ww-split{font-size:11.5px;color:var(--brand);margin:3px 0 4px;
+  font-family:'SF Mono',Menlo,monospace}
+.ww-def{font-size:12.5px;color:var(--ink2);line-height:1.55}
+
+/* 前后缀例子 */
+.wb-ex{display:flex;align-items:baseline;gap:10px;padding:8px 11px;
+  background:var(--bg);border-radius:8px;margin-bottom:6px}
+.ex-l{flex:1;font-size:12.5px;color:var(--ink);font-weight:500;
+  font-family:'SF Mono',Menlo,monospace}
+.ex-r{flex:0 0 auto;font-size:12px;color:var(--ink2)}
+
+/* 提示条 */
+.wb-tip{margin-top:9px;padding:9px 11px;background:var(--bg);
+  border-radius:8px;font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* 同义替换标签 */
+.syn-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px 0 9px}
+.syn-tag{padding:5px 11px;background:var(--bg);border:1px solid var(--line);
+  border-radius:14px;font-size:12.5px;color:var(--ink);cursor:pointer}
+.syn-ex{padding:10px 12px;background:var(--bg);border-radius:8px;
+  font-size:12.5px;color:var(--ink2);line-height:1.6;font-style:italic}
+
+/* 真题词汇卡 */
+.ex-card{background:var(--card);border-radius:var(--r);padding:13px 14px;
+  margin-bottom:9px;box-shadow:var(--sh)}
+.ex-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ex-w{font-size:15.5px;font-weight:600;color:var(--ink);min-width:0;flex:1}
+.ex-ph{display:block;font-size:11.5px;color:var(--ink3);font-weight:400;
+  font-family:'SF Mono',Menlo,monospace;margin-top:1px}
+.ex-tools{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+.ex-src{padding:2px 8px;background:var(--bg);border-radius:10px;
+  font-size:10.5px;color:var(--ink3);white-space:nowrap}
+.ex-def{font-size:13px;color:var(--ink2);margin:7px 0 8px;line-height:1.55}
+.ex-sent{padding:9px 11px;background:var(--bg);border-radius:8px;
+  font-size:12.5px;color:var(--ink);line-height:1.6;font-style:italic}
+.ex-note{margin-top:7px;font-size:11.5px;color:var(--ink3);line-height:1.55}
+.ex-note.warn{color:var(--bad);font-weight:500}
+
+/* 构词练习 */
+.mq-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:7px}
+.mq-fill{height:100%;background:var(--brand);border-radius:2px}
+.mq-count{font-size:11.5px;color:var(--ink3);text-align:right;margin-bottom:10px}
+.mq-card{background:var(--card);border-radius:var(--r);padding:22px 18px;
+  box-shadow:var(--sh);text-align:center}
+.mq-stem{font-size:30px;font-weight:600;color:var(--ink);letter-spacing:.5px}
+.mq-want{font-size:13px;color:var(--ink2);margin:9px 0 17px}
+.mq-want b{color:var(--brand)}
+.mq-in{width:100%;padding:13px 14px;border:1.5px solid var(--line);
+  border-radius:11px;font-size:16px;text-align:center;color:var(--ink);
+  background:var(--bg);outline:none;box-sizing:border-box}
+.mq-in:focus{border-color:var(--brand)}
+.mq-btns{display:flex;gap:9px;margin-top:15px}
+.mq-btns button{flex:1;padding:12px;border-radius:11px;font-size:14px;
+  cursor:pointer;border:none;font-weight:500}
+.btn-main{background:var(--brand);color:#fff}
+.btn-ghost{background:var(--bg);color:var(--ink2);border:1px solid var(--line)!important}
+.mq-hint{margin-top:12px;padding:10px 12px;background:var(--bg);
+  border-radius:9px;font-size:12.5px;color:var(--ink2);text-align:left}
+.mq-ok,.mq-no{margin-top:12px;padding:12px 13px;border-radius:9px;
+  font-size:13.5px;text-align:left}
+.mq-ok{background:rgba(79,138,107,.1);color:var(--ok)}
+.mq-no{background:rgba(184,92,98,.1);color:var(--bad)}
+.mq-why{margin-top:6px;font-size:12px;color:var(--ink2);line-height:1.6}
+.mq-done{background:var(--card);border-radius:var(--r);padding:34px 22px;
+  text-align:center;box-shadow:var(--sh)}
+.md-icon{width:52px;height:52px;line-height:52px;margin:0 auto 14px;
+  background:var(--ok);color:#fff;border-radius:50%;font-size:25px}
+.md-t{font-size:16px;font-weight:600;color:var(--ink);margin-bottom:7px}
+.md-s{font-size:12.5px;color:var(--ink2);line-height:1.65;margin-bottom:18px}
+.mq-done .btn-main{padding:12px 30px;border-radius:11px;font-size:14px;border:none}

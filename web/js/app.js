@@ -289,7 +289,7 @@ function mapDl(){
   </div>
   <div id="mapBody">${mapTab==='tree'?dlTree():dlChaps()}</div>`;
 }
-function setMapTab(t){mapTab=t;renderMap();window.scrollTo({top:0})}
+function setMapTab(t){mapTab=t;renderMap();syncSubjUI();window.scrollTo({top:0})}
 
 function dlTree(){
   return `<div class="card flat">
@@ -354,12 +354,14 @@ function mapEn(){
   <div class="tabs">
     <button class="${mapTab==='plan'?'on':''}" onclick="setMapTab('plan')">🎯 每日学习</button>
     <button class="${mapTab==='tree'?'on':''}" onclick="setMapTab('tree')">📐 语法体系</button>
+    <button class="${mapTab==='wb'?'on':''}" onclick="setMapTab('wb')">🧬 构词法</button>
     <button class="${mapTab==='vocab'?'on':''}" onclick="setMapTab('vocab')">📚 词汇总览</button>
     <button class="${mapTab==='phr'?'on':''}" onclick="setMapTab('phr')">🔗 固定搭配</button>
   </div>
   <div id="mapBody">${
     mapTab==='vocab'?enVocab():
     mapTab==='plan'?(famView!==null?famListView():enPlan()):
+    mapTab==='wb'?enWordBuild():
     mapTab==='phr'?enPhrases():enGrammar()}</div>`;
 }
 
