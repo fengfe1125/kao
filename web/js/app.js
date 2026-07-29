@@ -446,8 +446,8 @@ let sess=null;  // {items:[], i:0, phase:'study'|'quiz', answered, picked, corre
 
 function enPlan(){
   if(!sess) return planHome();
-  if(sess.i>=sess.items.length) return planDone();
-  const it=sess.items[sess.i];
+  if(sess.i>=sess.queue.length) return planDone();
+  const it=curTask();
   return it.study?studyView(it):quizView(it);
 }
 
@@ -663,7 +663,7 @@ function studyView(it){
     <div class="smean">${esc(it.mean)}</div>
     <div class="muted" style="text-align:center;font-size:12px;margin-top:12px">
       先读两遍记住它，下一步会马上考你</div>
-    <button class="btn full" style="margin-top:14px" onclick="sessNext()">记住了，继续 ›</button>
+    <button class="btn full" style="margin-top:14px" onclick="studyNext()">记住了，继续 ›</button>
   </div>`;
 }
 
@@ -717,17 +717,26 @@ function quizView(q){
           ${nextIvText(q.word)}</div>
       </div>
       <button class="btn full" style="margin-top:11px" onclick="sessNext()">
-        ${sess.i>=sess.items.length-1?'完成学习':'下一个 ›'}</button>`:''}
+        ${sess.i>=sess.queue.length-1?'完成学习':'下一个 ›'}</button>`:''}
   </div>`;
 }
 function sessBar(){
-  const p=Math.round(sess.i/sess.items.length*100);
+  const p=Math.round(sess.i/sess.queue.length*100);
+  const t=sess.queue[sess.i];
+  const rep=t?(t.rep||(t.study?0:1)):0;
+  const doneN=sess.doneWords?Object.keys(sess.doneWords).length:0;
   return `
   <div class="spread" style="margin-bottom:9px">
-    <span class="muted">${sess.i+1} / ${sess.items.length}　·　对 ${sess.right} 错 ${sess.wrong}</span>
+    <span class="muted">${sess.i+1} / ${sess.queue.length}　·　对 ${sess.right} 错 ${sess.wrong}</span>
     <button class="btn line sm" onclick="sessQuit()">退出</button>
   </div>
-  <div class="miniprog" style="margin-bottom:12px"><i style="width:${p}%"></i></div>`;
+  <div class="miniprog" style="margin-bottom:8px"><i style="width:${p}%"></i></div>
+  <div class="rep-bar">
+    ${rep>0?`<span class="rep-dots">
+      ${[1,2,3].map(n=>`<i class="${n<rep?'done':n===rep?'now':''}"></i>`).join('')}
+      第 ${rep} / ${REPEAT} 遍</span>`:`<span class="rep-dots"><em>先认识这个词</em></span>`}
+    <span class="rep-done">已过 ${doneN} 词</span>
+  </div>`;
 }
 function nextIvText(word){
   const c=(S.srs||{})[word];
@@ -739,7 +748,7 @@ function nextIvText(word){
 
 function sessPick(o){
   if(sess.answered) return;
-  const q=sess.items[sess.i];
+  const q=curTask();
   sess.picked=o; sess.correct=(o===q.answer);
   sessGrade(q);
 }
@@ -748,7 +757,7 @@ function sessSubmit(){
   const el=document.getElementById('sessIn');
   const v=el?el.value:'';
   if(!v.trim()){toast('请先输入答案');return}
-  const q=sess.items[sess.i];
+  const q=curTask();
   sess.picked=v; sess.correct=checkAnswer(q,v);
   sessGrade(q);
 }
