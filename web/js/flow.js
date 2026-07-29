@@ -259,7 +259,7 @@ function useView(q){
       <span class="ftag" style="background:${f.color}18;color:${f.color}">${f.name} · 在句中用</span>
     </div>
 
-    <div class="uv-tip">读懂句子，选出最合适的词</div>
+    <div class="uv-tip">读懂句子，选出最合适的词${q.posHint?'　·　需要填 <b>'+q.posHint+'</b>':''}</div>
     <div class="uv-sent">${shown}</div>
     ${q.qsrc?`<div class="uv-src">${esc(q.qsrc)}</div>`:''}
 
@@ -279,9 +279,10 @@ function useView(q){
     ${sess.answered?`
       <div class="fb ${sess.correct?'ok':'no'}">
         <div class="fb-h">${sess.correct?'✓ 用对了':'✗ 用错了'}</div>
-        <div class="uv-full">${esc(q.fullSent)}
-          <button class="spk sm" onclick="speak('${esc(q.fullSent).replace(/'/g,"\\'")}')">🔊</button>
+        <div class="uv-full">${clickableSentence(q.fullSent, q.word)}
+          <button class="spk sm" onclick="speak('${esc2(q.fullSent)}')">🔊 整句</button>
         </div>
+        <div class="uv-taphint">点句中任意单词可查词并朗读</div>
         ${q.qcn?`<div class="uv-cn">${esc(q.qcn)}</div>`:''}
         <div class="fb-b" style="margin-top:8px">
           <b>${esc(q.word)}</b>　${esc(q.hint||'')}

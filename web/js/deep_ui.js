@@ -46,7 +46,7 @@ function deepHTML(d){
         <button class="dw-spk slow" onclick="speakSlow('${esc2(d.w)}')">🐢</button>
       </div>
       ${d.ph?`<div class="deep-ph">${d.ph}</div>`:''}
-      <div class="deep-def">${d.def||''}</div>
+      <div class="deep-def">${defByPos(d.def)}</div>
       ${(mark||tierName)?`<div class="deep-tags">
         ${mark?`<span class="dt ${d.lv===1?'up':'dia'}">${mark} ${d.lv===1?'基础模块新增':'拓展模块新增'}</span>`:''}
         ${tierName?`<span class="dt">${tierName}</span>`:''}
@@ -104,14 +104,15 @@ function deepSent(d){
   if(!d.sents.length) return '';
   return `
   <div class="deep-sec">
-    <div class="ds-t"><i>📖</i>在句子里记</div>
+    <div class="ds-t"><i>📖</i>在句子里记
+      <em class="ds-hint">点句中任意单词可查词并朗读</em></div>
     ${d.sents.map(s=>`
       <div class="dsn-card">
         <div class="dsn-top">
           <span class="dsn-src">${s.src}</span>
-          <button class="dsn-spk" onclick="speak('${esc2(s.sent)}')">🔊</button>
+          <button class="dsn-spk" onclick="speak('${esc2(s.sent)}')">🔊 整句</button>
         </div>
-        <div class="dsn-en">${hlWord(s.sent, d.w)}</div>
+        <div class="dsn-en">${clickableSentence(s.sent, d.w)}</div>
         ${s.cn?`<div class="dsn-cn">${s.cn}</div>`:''}
         ${s.note?`<div class="dsn-note">${s.note}</div>`:''}
       </div>`).join('')}

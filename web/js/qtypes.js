@@ -31,12 +31,22 @@ function makeUseQuestion(wordArr){
   const blanked = hit.sent.replace(new RegExp('\\b'+hit.form.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b'), '______');
   // 干扰项：同词性、长度接近的词
   const opts = pickUseDistractors(wordArr, hit.form);
+  // 词性提示（帮助判断该填什么）
+  let posHint = '';
+  if(typeof parsePosSmart==='function'){
+    const pl = parsePosSmart(wordArr[2]||'');
+    if(pl.length && pl[0].poss && pl[0].poss.length){
+      const info = (typeof POS_MAP!=='undefined') ? POS_MAP[pl[0].poss[0]] : null;
+      if(info) posHint = info.zh;
+    }
+  }
   return {
     type:'use', form:'choice',
     word: w, wordArr: wordArr,
     q: blanked,
     qcn: hit.cn,
     qsrc: hit.src,
+    posHint: posHint,
     options: opts.list,
     answer: opts.answer,
     speakText: hit.sent,
