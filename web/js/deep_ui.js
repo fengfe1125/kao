@@ -163,8 +163,8 @@ function deepAdvice(d){
               <b>${s[0]}</b><span>${s[1]}</span>
             </div>`).join('')}
         </div>`:''}
-      <div class="dav-tip">拼写练习必须动笔。看着眼熟 ≠ 写得出来，
-        这是取消选择题之后最大的失分来源。</div>
+      <div class="dav-tip">先能认出来，再谈写出来。<br>
+        阅读和翻译占 58 分，全靠"认识"；真正要默写的只有高频词。</div>
     </div>
   </div>`;
 }

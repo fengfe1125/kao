@@ -446,9 +446,11 @@ let sess=null;  // {items:[], i:0, phase:'study'|'quiz', answered, picked, corre
 
 function enPlan(){
   if(!sess) return planHome();
-  if(sess.i>=sess.queue.length) return planDone();
+  if(sess.i>=sess.queue.length) return (sess.spellRound?spellDone():planDone());
   const it=curTask();
-  return it.study?studyView(it):quizView(it);
+  if(it.study) return studyView(it);
+  if(it.type==='use') return useView(it);
+  return quizView(it);
 }
 
 /* ---------- 计划首页 ---------- */
@@ -700,6 +702,7 @@ function quizView(q){
         }).join('')}
       </div>`
     :`
+      ${q.spellHint?`<div class="sp-hint">${esc(q.spellHint)}</div>`:''}
       <input class="ans-in" id="sessIn" style="min-height:auto;margin-top:4px;font-family:${q.type==='e2c'?'inherit':"'SF Mono',Menlo,monospace"}"
         placeholder="${q.type==='e2c'?'输入中文意思…':'输入英文单词…'}"
         ${sess.answered?'disabled':''} value="${sess.answered?esc(sess.picked||''):''}"

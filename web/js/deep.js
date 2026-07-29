@@ -140,12 +140,19 @@ function sentOf(word){
 function deepCard(wordArr){
   const w = Array.isArray(wordArr)?wordArr[0]:wordArr;
   const item = Array.isArray(wordArr)?wordArr:null;
+  // 官方标记与档位以 VOCAB3000 为准（旧库第4位是难度等级，含义不同）
+  let lv=0, tier=0;
+  if(typeof VOCAB3000!=='undefined'){
+    const key=String(w).toLowerCase().split('/')[0];
+    const hit=VOCAB3000.find(x=>String(x[0]).toLowerCase().split('/')[0]===key);
+    if(hit){ lv=hit[3]; tier=hit[4]; }
+  }
   return {
     w: w,
     ph: item?item[1]:'',
     def: item?item[2]:'',
-    lv: item?item[3]:0,
-    tier: item?item[4]:0,
+    lv: lv,
+    tier: tier,
     morph: morphOf(w),
     syn: synOf(w),
     sents: sentOf(w)
@@ -634,11 +641,11 @@ function fallbackSent(wordArr){
    3) 该词在考纲中的定位与学法建议                       */
 
 function tierAdvice(tier, lv){
-  if(lv===1) return '这是 ▲ 基础模块新增词，属于高职阶段新学内容，是出题人默认的区分度所在。必须做到会拼、会变形。';
-  if(lv===2) return '这是 ◆ 拓展模块新增词，面向升学方向。考到就是分差，建议单独抄写记忆。';
-  if(tier===1) return '这是构成句子骨架的核心动词。先把它的过去式、过去分词、第三人称单数都记牢，语法填空常考。';
-  if(tier===2) return '这是阅读和写作中反复出现的高频基础词，要求做到看见就懂、提笔能写。';
-  return '这是入学阶段应掌握的基础词。如果已经认识，快速过筛即可，把时间留给 ▲◆ 标记词。';
+  if(lv===1) return '这是 ▲ 基础模块新增词，高职阶段新学内容，是出题人默认的区分度所在。先做到在句子里认得出、用得对；它属于高频词，学完可以在拼写专项里再练一遍。';
+  if(lv===2) return '这是 ◆ 拓展模块新增词，面向升学方向。考到就是分差。重点是在阅读里认出它的意思，写作时未必用得上。';
+  if(tier===1) return '这是构成句子骨架的核心动词。语法填空常考它的时态变形，建议连同过去式、过去分词一起记。';
+  if(tier===2) return '这是阅读和写作中反复出现的高频基础词，做到看见就懂是底线，能写出来更好。';
+  return '这是入学阶段应掌握的基础词。能在阅读里认出意思就够了，不必花时间默写，把精力留给 ▲◆ 标记词。';
 }
 
 /* 找同类词：同首字母 + 同档位 + 释义词性相近 */
@@ -671,10 +678,21 @@ function siblingWords(wordArr){
     // 仍然三者皆空 → 补学法卡
     if((!d.morph||!d.morph.length) && (!d.sents||!d.sents.length) && (!d.syn||!d.syn.length)){
       d.advice = {
-        text: tierAdvice(wordArr[4], wordArr[3]),
+        text: tierAdvice(d.tier, d.lv),
         sibs: siblingWords(wordArr)
       };
     }
     return d;
   };
+})();
+
+
+/* 合并扩充词根到主库 */
+(function mergeRootsExt(){
+  if(typeof ROOTS_EXT==='undefined') return;
+  if(typeof ROOTS==='undefined') return;
+  const have=new Set(ROOTS.map(r=>r.r));
+  ROOTS_EXT.forEach(r=>{ if(!have.has(r.r)) ROOTS.push(r); });
+  // 清空索引缓存，强制重建
+  if(typeof WORD_MORPH!=='undefined') WORD_MORPH=null;
 })();

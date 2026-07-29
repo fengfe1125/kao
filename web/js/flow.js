@@ -27,26 +27,24 @@ function buildSessQueue(fresh, review){
   return all.flat();
 }
 
-/* 把占位任务实例化为真实题目（按遍数决定难度） */
+/* 把占位任务实例化为真实题目
+   主线：认 → 辨 → 用（不强制拼写）
+   拼写：作为可选任务单独进行 */
 function realizeTask(t){
   if(!t || !t.__pending) return t;
   const w=t.wordArr, rep=t.rep;
-  const fam=(typeof famOf==='function')?famOf(w[0]):0;
-  let type, form;
-  if(rep<=1){
-    // 第1遍：认 —— 看英文选中文，最容易
-    type='e2c'; form='choice';
-  } else if(rep===2){
-    // 第2遍：想 —— 中译英，熟练的直接写，生疏的给选项
-    type='c2e'; form=(fam>=3)?'blank':'choice';
+  let q;
+  if(t.spellMode){
+    // 拼写专项任务
+    q = (t.spellForm==='choice') ? makeSpellQuestion(w,'choice')
+      : (t.spellForm==='hint')   ? makeSpellHint(w)
+      : makeSpellQuestion(w,'blank');
   } else {
-    // 第3遍：写 —— 听音拼写，最难
-    type='spell'; form='blank';
+    q = mainlineQuestion(w, rep);
   }
-  const q=makeQuestion(w,type,form);
-  q.fam=fam;
+  q.fam=(typeof famOf==='function')?famOf(w[0]):0;
   q.isNew=t.isNew; q.afterStudy=!!t.afterStudy; q.rep=rep;
-  q.wordArr=w; q.retry=!!t.retry;
+  q.wordArr=w; q.retry=!!t.retry; q.spellMode=!!t.spellMode;
   return q;
 }
 
@@ -61,7 +59,8 @@ function planStart(extra){
     queue=buildSessQueue([], pick);
   } else {
     if(!p.fresh.length && !p.review.length){toast('今日没有需要学习的词');return}
-    queue=buildSessQueue(p.fresh, p.review);
+    // 一轮最多 8 新词 + 8 复习词，保证三遍都能在本轮走完
+    queue=buildSessQueue(p.fresh.slice(0,8), p.review.slice(0,8));
   }
   sess={queue, i:0, answered:false, picked:null, correct:false,
         right:0, wrong:0, extra:!!extra,
@@ -80,6 +79,7 @@ function curTask(){
 function renderSess(){
   const el=document.getElementById('mapBody');
   if(el) el.innerHTML=enPlan();
+  if(typeof syncSubjUI==='function') syncSubjUI();
   window.scrollTo({top:0});
 }
 
@@ -115,12 +115,13 @@ function sessGrade(q){
     insertRetry(q);
   }
 
-  // 弹深度卡
+  // 弹深度卡（关闭后自动进入下一题）
   const wa=q.wordArr||findWordArr(q.word);
   if(wa){
     setTimeout(()=>{
       showDeep(wa, {correct:sess.correct, rep:sess.correct?rep:null,
-        btnText: sess.correct?(isLast?'下一个词':'继续'):'我记住了'});
+        btnText: sess.correct?(isLast?'下一个词':'继续'):'我记住了',
+        onClose: ()=>{ sessNext(); }});
     }, sess.correct?260:420);
   }
   if(!sess.correct) speak(q.speakText);
@@ -131,7 +132,11 @@ function findWordArr(w){
   return ALL_VOCAB.find(x=>String(x[0]).toLowerCase()===k)||null;
 }
 function insertRepeat(q, nextRep){
-  const pos=Math.min(sess.i+1+GAP+Math.floor(Math.random()*3), sess.queue.length);
+  // 保证本轮内一定能做到：插在剩余队列的靠后位置，但不超过末尾
+  const remain = sess.queue.length - sess.i - 1;
+  const gap = nextRep===2 ? 4 : 6;
+  let pos = sess.i + 1 + Math.min(gap, Math.max(1, remain));
+  if(pos > sess.queue.length) pos = sess.queue.length;
   sess.queue.splice(pos,0,{__pending:true, wordArr:q.wordArr||findWordArr(q.word),
     isNew:q.isNew, rep:nextRep});
   sess.items=sess.queue;
@@ -159,4 +164,130 @@ function studyNext(){
   if(t && t.wordArr){
     showDeep(t.wordArr, {btnText:'开始测试', onClose:()=>{ sessNext(); }});
   } else sessNext();
+}
+
+
+/* ============================================================
+   完成页 + 拼写专项（可选）
+   ============================================================ */
+function planDone(){
+  const total=sess.right+sess.wrong;
+  const acc=total?Math.round(sess.right/total*100):0;
+  const doneN=todayCount(), goal=(S.plan&&S.plan.goal)||30;
+  const reach=doneN>=goal;
+  const learned=sess.doneWords?Object.keys(sess.doneWords):[];
+  // 本轮学过、且值得练拼写的词
+  const spellable=learned.map(w=>findWordArr(w)).filter(w=>w&&worthSpelling(w));
+
+  return `<div class="card" style="text-align:center;padding:30px 20px">
+    <div style="font-size:42px;margin-bottom:9px">${reach?'🎉':acc>=80?'👍':'💪'}</div>
+    <div style="font-size:19px;font-weight:700;margin-bottom:4px">
+      ${reach?'今日目标达成':'本轮完成'}</div>
+    <div class="muted" style="margin-bottom:4px">
+      认识了 ${learned.length} 个词　·　正确率 ${acc}%</div>
+    <div class="muted" style="margin-bottom:16px;font-size:12px">
+      今日累计 ${doneN} / ${goal} 个${reach?'':'　还差 '+(goal-doneN)+' 个'}</div>
+  </div>
+
+  ${spellable.length?`
+  <div class="card spell-invite">
+    <div class="si-t">要不要顺便练拼写？</div>
+    <div class="si-d">这 ${spellable.length} 个是<b>高频词</b>（▲◆ 标记或骨架词），
+      写作和翻译填空里可能要自己写出来。<br>
+      其余的词只要能在阅读里认出就够了，不用花时间默写。</div>
+    <div class="si-words">
+      ${spellable.slice(0,12).map(w=>`<span class="si-w">${w[0]}</span>`).join('')}
+      ${spellable.length>12?`<span class="si-more">+${spellable.length-12}</span>`:''}
+    </div>
+    <div class="si-btns">
+      <button class="btn" onclick="startSpell('choice')">选拼写<em>看词选正确拼法</em></button>
+      <button class="btn" onclick="startSpell('hint')">补全<em>给首字母提示</em></button>
+      <button class="btn" onclick="startSpell('blank')">默写<em>听音直接写</em></button>
+    </div>
+  </div>`:''}
+
+  <div class="row" style="justify-content:center;margin-top:4px">
+    <button class="btn ghost" onclick="sessQuit()">查看统计</button>
+    <button class="btn ghost" onclick="planStart(true)">再认 10 个</button>
+  </div>`;
+}
+
+/* 启动拼写专项 */
+function startSpell(form){
+  const learned=(sess&&sess.doneWords)?Object.keys(sess.doneWords):[];
+  let pool=learned.map(w=>findWordArr(w)).filter(w=>w&&worthSpelling(w));
+  if(!pool.length) pool=shuffle(spellingPool()).slice(0,10);
+  if(!pool.length){toast('还没有可练拼写的高频词');return}
+  const queue=pool.map(w=>({__pending:true, wordArr:w, isNew:false, rep:1,
+    spellMode:true, spellForm:form}));
+  sess={queue, i:0, answered:false, picked:null, correct:false,
+        right:0, wrong:0, extra:false, spellRound:true,
+        doneWords:{}, totalPlan:queue.length};
+  sess.items=queue;
+  renderSess();
+}
+
+/* 拼写轮结束页 */
+function spellDone(){
+  const total=sess.right+sess.wrong;
+  const acc=total?Math.round(sess.right/total*100):0;
+  return `<div class="card" style="text-align:center;padding:32px 20px">
+    <div style="font-size:42px;margin-bottom:9px">${acc>=80?'🎯':'📝'}</div>
+    <div style="font-size:18px;font-weight:700;margin-bottom:5px">拼写练习完成</div>
+    <div class="muted" style="margin-bottom:16px">
+      写对 ${sess.right} / ${total}　·　正确率 ${acc}%</div>
+    <div class="muted" style="font-size:12px;margin-bottom:18px;line-height:1.7">
+      写错的词不用焦虑。<br>只要能在阅读里认出来，选择题和阅读题就不会丢分。</div>
+    <button class="btn" onclick="sessQuit()">完成</button>
+  </div>`;
+}
+
+
+/* ============================================================
+   句子填空题视图 —— 在语境里认词
+   ============================================================ */
+function useView(q){
+  const f=(typeof FAM!=='undefined')?FAM[q.fam||0]:{color:'#888',name:''};
+  const shown=sess.answered
+    ? q.q.replace('______','<b class="uv-fill">'+esc(q.answer)+'</b>')
+    : q.q.replace('______','<span class="uv-blank">______</span>');
+  return `
+  ${sessBar()}
+  <div class="card">
+    <div class="spread" style="margin-bottom:10px">
+      <span class="muted" style="font-weight:700">选词填空</span>
+      <span class="ftag" style="background:${f.color}18;color:${f.color}">${f.name} · 在句中用</span>
+    </div>
+
+    <div class="uv-tip">读懂句子，选出最合适的词</div>
+    <div class="uv-sent">${shown}</div>
+    ${q.qsrc?`<div class="uv-src">${esc(q.qsrc)}</div>`:''}
+
+    <div class="opts" style="margin-top:12px">
+      ${q.options.map((o,i)=>{
+        let cls='';
+        if(sess.answered){
+          if(o===q.answer) cls='ok';
+          else if(o===sess.picked) cls='no';
+        }
+        return `<button class="opt ${cls}" onclick="sessPick('${esc(o).replace(/'/g,"\\'")}')"
+          ${sess.answered?'disabled':''}>
+          <span class="oi">${'ABCD'[i]}</span><span class="ot">${esc(o)}</span></button>`;
+      }).join('')}
+    </div>
+
+    ${sess.answered?`
+      <div class="fb ${sess.correct?'ok':'no'}">
+        <div class="fb-h">${sess.correct?'✓ 用对了':'✗ 用错了'}</div>
+        <div class="uv-full">${esc(q.fullSent)}
+          <button class="spk sm" onclick="speak('${esc(q.fullSent).replace(/'/g,"\\'")}')">🔊</button>
+        </div>
+        ${q.qcn?`<div class="uv-cn">${esc(q.qcn)}</div>`:''}
+        <div class="fb-b" style="margin-top:8px">
+          <b>${esc(q.word)}</b>　${esc(q.hint||'')}
+        </div>
+      </div>
+      <button class="btn full" style="margin-top:11px" onclick="sessNext()">
+        ${sess.i>=sess.queue.length-1?'完成学习':'下一个 ›'}</button>`:''}
+  </div>`;
 }
