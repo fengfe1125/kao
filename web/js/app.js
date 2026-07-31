@@ -90,6 +90,8 @@ function stageGrammar(n){
    首页
    ============================================================ */
 function renderHome(){
+  if(S.subj==='bm'){ const e=document.getElementById('p-home');
+    if(e) e.innerHTML=bmHome(); return; }
   document.getElementById('p-home').innerHTML = isEn()?homeEn():homeDl();
 }
 
@@ -213,6 +215,8 @@ function homeEn(){
 function goVocab(tab){mapTab=tab;famView=null;go('map')}
 
 function renderPath(){
+  if(S.subj==='bm'){ const e=document.getElementById('p-path');
+    if(e) e.innerHTML='<div class="wb-intro"><b>学习路径已在「知识」页</b><p>点击底部「知识」进入六周路径与知识地图。</p></div>'; return; }
   document.getElementById('p-path').innerHTML = isEn()?pathEn():pathDl();
 }
 function pathDl(){
@@ -277,7 +281,9 @@ function pathEn(){
 let mapTab='tree', vocabFilter={q:'',az:'',lv:0}, flashIdx=0, flashBack=false;
 
 function renderMap(){
-  document.getElementById('p-map').innerHTML = isEn()?mapEn():mapDl();
+  const el=document.getElementById('p-map');
+  if(S.subj==='bm'){ el.innerHTML = bizModelPage(); return; }
+  el.innerHTML = isEn()?mapEn():mapDl();
 }
 
 /* ---------- 数电：导图 + 章节 ---------- */
@@ -898,6 +904,8 @@ function jumpGram(id){
    测验
    ============================================================ */
 function renderQuiz(){
+  if(S.subj==='bm'){ const e=document.getElementById('p-quiz');
+    if(e){ bmTab='quiz'; bmQuiz=null; e.innerHTML='<div id="bmBody">'+bmQuizView()+'</div>'; } return; }
   if(Q.list.length){renderQCard();return}
   document.getElementById('p-quiz').innerHTML = isEn()?quizEnHome():quizDlHome();
 }
@@ -1173,14 +1181,17 @@ function resetAll(){
 const R={home:renderHome,path:renderPath,map:renderMap,quiz:renderQuiz,me:renderMe};
 const TITLE={
   dl:{home:'数字电路与逻辑设计',path:'零基础学习路径',map:'知识点与思维导图',quiz:'主观题训练',me:'我的备考中心'},
-  en:{home:'大学英语',path:'零基础学习路径',map:'语法与词汇',quiz:'语法专项训练',me:'我的备考中心'}
+  en:{home:'大学英语',path:'零基础学习路径',map:'语法与词汇',quiz:'语法专项训练',me:'我的备考中心'},
+  bm:{home:'商业模式',path:'六周学习路径',map:'知识地图与讲解',quiz:'概念自测',me:'我的学习记录'}
 };
-const SUB={dl:'武昌首义学院 2025 专升本考试大纲',en:'湖北省普通高等教育专升本考试大纲'};
+const SUB={dl:'武昌首义学院 2025 专升本考试大纲',en:'湖北省普通高等教育专升本考试大纲',
+  bm:'肖星《一本书读懂财报》· 《精益数据分析》'};
 let curPage='home';
 
 /* 科目相关的 UI 状态统一同步，避免各入口不一致 */
 function syncSubjUI(){
   document.body.classList.toggle('en-mode',S.subj==='en');
+  document.body.classList.toggle('bm-mode',S.subj==='bm');
   document.querySelectorAll('.subj button')
     .forEach(b=>b.classList.toggle('on',b.dataset.s===S.subj));
 }

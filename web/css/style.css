@@ -722,3 +722,149 @@ body.deep-lock{overflow:hidden}
 .sv-body .deep-sec{margin-bottom:15px}
 .sv-foot{padding:4px 16px 16px}
 .sv-hint{text-align:center;font-size:12px;color:var(--ink3);margin-bottom:11px}
+
+/* ============================================================
+   商业模式领域
+   ============================================================ */
+.bm-hero{background:var(--card);border-radius:var(--r);padding:18px 16px;
+  margin-bottom:12px;box-shadow:var(--sh)}
+.bm-h-t{font-size:20px;font-weight:700;color:var(--ink)}
+.bm-h-s{font-size:13px;color:var(--brand);margin-top:3px;font-weight:500}
+.bm-h-i{font-size:12.5px;color:var(--ink2);line-height:1.75;margin-top:10px}
+.bm-prog{margin-top:14px}
+.bm-p-bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden}
+.bm-p-bar i{display:block;height:100%;background:var(--brand);border-radius:3px}
+.bm-p-txt{font-size:11.5px;color:var(--ink3);margin-top:5px;text-align:right}
+
+/* 学习路径 */
+.bm-week{background:var(--card);border-radius:var(--r);padding:14px 15px;
+  margin-bottom:10px;box-shadow:var(--sh);border-left:3px solid var(--line)}
+.bm-week.done{border-left-color:var(--ok)}
+.bmw-h{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.bmw-n{font-size:12px;font-weight:700;color:var(--brand);
+  background:var(--brand-l);padding:2px 9px;border-radius:8px}
+.bmw-f{font-size:14px;font-weight:600;color:var(--ink);flex:1}
+.bmw-p{font-size:11.5px;color:var(--ink3)}
+.bmw-nodes{margin-top:10px;display:flex;flex-direction:column;gap:5px}
+.bmw-node{padding:8px 11px;background:var(--bg);border-radius:9px;
+  font-size:13px;color:var(--ink2);cursor:pointer}
+.bmw-node.d{color:var(--ok)}
+.bmw-task{margin-top:11px;padding:10px 12px;background:var(--warm-l);
+  border-radius:9px;font-size:12px;color:var(--ink2);line-height:1.65}
+.bmw-task b{display:block;color:var(--warm);margin-bottom:3px;font-size:11.5px}
+
+/* 参考书 */
+.bm-books{background:var(--card);border-radius:var(--r);padding:15px;
+  margin-top:14px;box-shadow:var(--sh)}
+.bmb-t{font-size:14px;font-weight:600;color:var(--ink);margin-bottom:11px}
+.bmb-item{padding:11px 12px;background:var(--bg);border-radius:10px;margin-bottom:8px}
+.bmb-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bmb-h b{font-size:13.5px;color:var(--ink)}
+.bmb-h span{font-size:10.5px;color:var(--brand);background:var(--brand-l);
+  padding:1px 7px;border-radius:6px}
+.bmb-a{font-size:11.5px;color:var(--ink3);margin-top:2px}
+.bmb-w{font-size:12px;color:var(--ink2);line-height:1.6;margin-top:6px}
+
+/* 知识地图 */
+.bm-stage{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);
+  margin-bottom:9px;overflow:hidden}
+.bms-h{display:flex;align-items:center;gap:11px;padding:14px}
+.bms-num{width:30px;height:30px;line-height:30px;text-align:center;flex:0 0 auto;
+  background:var(--brand);color:#fff;border-radius:9px;font-size:14px;font-weight:600}
+.bm-stage.done .bms-num{background:var(--ok)}
+.bms-mid{flex:1;min-width:0}
+.bms-t{font-size:14.5px;font-weight:600;color:var(--ink)}
+.bms-g{font-size:12px;color:var(--ink2);margin-top:2px}
+.bms-m{font-size:11px;color:var(--ink3);margin-top:3px}
+.bms-body{padding:0 14px 14px;border-top:1px solid var(--line)}
+.bms-why{padding:10px 0 11px;font-size:12.5px;color:var(--ink2);line-height:1.7}
+.bms-node{background:var(--bg);border-radius:11px;padding:11px 12px;
+  margin-bottom:7px;cursor:pointer}
+.bms-node.d{background:var(--ok-l)}
+.bmn-h{display:flex;align-items:center;gap:8px;justify-content:space-between}
+.bmn-t{font-size:13.5px;font-weight:600;color:var(--ink)}
+.bmn-lv{font-size:10px;padding:2px 7px;border-radius:6px;flex:0 0 auto;
+  background:var(--line2);color:var(--ink3)}
+.bmn-lv.lv-理解{background:var(--brand-l);color:var(--brand)}
+.bmn-lv.lv-掌握{background:var(--warm-l);color:var(--warm)}
+.bmn-lv.lv-灵活运用{background:var(--bad-l);color:var(--bad)}
+.bmn-pts{margin-top:7px;display:flex;flex-wrap:wrap;gap:5px}
+.bmn-pts span{font-size:11px;color:var(--ink3);background:var(--card);
+  padding:3px 8px;border-radius:6px}
+
+/* 教学页 */
+.bm-back{display:inline-block;padding:7px 14px;background:var(--card);
+  border-radius:10px;font-size:13px;color:var(--brand);cursor:pointer;
+  margin-bottom:10px;box-shadow:var(--sh)}
+.bml{background:var(--card);border-radius:var(--r);padding:18px 16px;box-shadow:var(--sh)}
+.bml-t{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:16px}
+.bml-sec{margin-bottom:18px}
+.bml-sec.why{background:var(--brand-l);border-radius:12px;padding:13px 14px}
+.bml-sec.ex{background:var(--bg);border-radius:12px;padding:13px 14px}
+.bml-sec.mis{background:var(--bad-l);border-radius:12px;padding:13px 14px}
+.bml-sec.quiz{background:var(--bg);border-radius:12px;padding:13px 14px}
+.bml-st{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;
+  color:var(--ink);margin-bottom:9px}
+.bml-i{width:20px;height:20px;line-height:20px;text-align:center;flex:0 0 auto;
+  background:var(--brand);color:#fff;border-radius:6px;font-size:11px}
+.bml-c{font-size:13.5px;color:var(--ink2);line-height:1.85}
+.bml-c b{color:var(--ink)}
+.bml-c blockquote{margin:9px 0;padding:9px 12px;background:var(--card);
+  border-left:3px solid var(--brand);border-radius:0 8px 8px 0;
+  font-size:13px;color:var(--ink2)}
+.bml-sec.why .bml-c blockquote{background:rgba(255,255,255,.6)}
+.bmt{width:100%;border-collapse:collapse;margin:10px 0;font-size:12.5px}
+.bmt th,.bmt td{padding:7px 9px;border:1px solid var(--line);text-align:left}
+.bmt th{background:var(--bg);font-weight:600;color:var(--ink)}
+.bml-m{padding:8px 11px;background:rgba(255,255,255,.6);border-radius:8px;
+  margin-bottom:6px;font-size:12.5px;color:var(--ink2);line-height:1.6}
+.bml-q{padding:11px 12px;background:var(--card);border-radius:10px;margin-bottom:8px}
+.bmq-q{font-size:13.5px;color:var(--ink);line-height:1.65}
+.bmq-btn{margin-top:8px;padding:6px 14px;border:1px solid var(--line);
+  background:var(--bg);border-radius:8px;font-size:12px;color:var(--ink2);cursor:pointer}
+.bmq-a{display:none;margin-top:9px;padding:10px 12px;background:var(--ok-l);
+  border-radius:9px;font-size:13px;color:var(--ok)}
+.bmq-a.on{display:block}
+.bmq-w{margin-top:5px;font-size:12px;color:var(--ink2);line-height:1.65}
+.bml-foot{margin-top:20px}
+
+/* 概念卡 */
+.bm-cards{display:flex;flex-wrap:wrap;gap:8px}
+.bm-card{flex:1 1 calc(50% - 4px);min-width:140px;background:var(--card);
+  border-radius:12px;padding:12px 13px;box-shadow:var(--sh);cursor:pointer}
+.bmc-n{font-size:14px;font-weight:600;color:var(--ink)}
+.bmc-f{font-size:11px;color:var(--ink3);margin-top:3px}
+
+/* 自测 */
+.bmq-card{background:var(--card);border-radius:var(--r);padding:20px 16px;
+  box-shadow:var(--sh)}
+.bmq-qt{font-size:16px;color:var(--ink);line-height:1.75;margin-bottom:16px}
+.bmq-ans{padding:13px 14px;background:var(--ok-l);border-radius:11px;
+  font-size:14px;color:var(--ok)}
+.bmq-al{font-size:11px;color:var(--ink3);margin-bottom:5px}
+.bmq-self{display:flex;gap:9px;margin-top:14px}
+.bmq-self .btn{flex:1}
+
+/* 商业模式主题色：墨绿 */
+body.bm-mode{--brand:#3f7a63;--brand2:#5b9a80;--brand-l:#ecf4f0}
+
+/* 商业模式首页 */
+.bm-next{cursor:pointer;position:relative;padding:16px}
+.bmn-lbl{font-size:11px;color:var(--brand);font-weight:600}
+.bmn-title{font-size:17px;font-weight:700;color:var(--ink);margin-top:5px}
+.bmn-stage{font-size:12px;color:var(--ink3);margin-top:3px}
+.bmn-go{position:absolute;right:16px;bottom:16px;font-size:13px;
+  color:var(--brand);font-weight:600}
+.bmh-stage{display:flex;align-items:center;gap:10px;padding:10px 11px;
+  background:var(--bg);border-radius:10px;margin-bottom:6px;cursor:pointer}
+.bmh-stage.done{background:var(--ok-l)}
+.bmh-num{width:24px;height:24px;line-height:24px;text-align:center;flex:0 0 auto;
+  background:var(--brand);color:#fff;border-radius:7px;font-size:12px;font-weight:600}
+.bmh-stage.done .bmh-num{background:var(--ok)}
+.bmh-mid{flex:1;min-width:0}
+.bmh-t{font-size:13.5px;font-weight:600;color:var(--ink)}
+.bmh-m{font-size:11px;color:var(--ink3);margin-top:2px}
+.bmh-bar{width:44px;height:4px;background:var(--line);border-radius:2px;
+  overflow:hidden;flex:0 0 auto}
+.bmh-bar i{display:block;height:100%;background:var(--brand);border-radius:2px}
+.bmh-stage.done .bmh-bar i{background:var(--ok)}
